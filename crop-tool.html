@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单品图片裁剪工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        select, input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #d4a373;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #d4a373;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c49363;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .canvas-area {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #imageCanvas {
+            max-width: 100%;
+            cursor: crosshair;
+            border: 1px solid #ccc;
+            background: white;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #d4a373;
+        }
+
+        .info-box h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .crop-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .crop-list h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .crop-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .crop-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .crop-item-info {
+            flex: 1;
+            font-size: 12px;
+        }
+
+        .crop-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .selection-rect {
+            position: absolute;
+            border: 2px dashed #d4a373;
+            background: rgba(212, 163, 115, 0.1);
+            pointer-events: none;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .instructions {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .instructions h2 {
+            font-size: 16px;
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 单品图片裁剪工具</h1>
+        <p class="subtitle">框选每个单品区域，自动保存为独立图片</p>
+
+        <div class="instructions">
+            <h2>📋 使用说明</h2>
+            <ol>
+                <li><strong>点击"上传图片"按钮</strong>，从 pic 文件夹中选择要裁剪的原图</li>
+                <li>设置集数和穿搭编号（会影响保存的文件名）</li>
+                <li>在图片上按住鼠标拖动框选单品区域</li>
+                <li>输入单品编号（1, 2, 3...），点击"裁剪并保存"</li>
+                <li>重复步骤3-4，直到裁剪完所有单品</li>
+                <li>上传下一张图片继续裁剪</li>
+            </ol>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>上传图片：</label>
+                <input type="file" id="imageUpload" accept="image/*" onchange="loadUploadedImage()" style="padding: 6px;">
+            </div>
+            
+            <div class="control-group" style="opacity: 0.6; pointer-events: none;">
+                <label>或选择图片：</label>
+                <select id="imageSelect" disabled>
+                    <option value="">-- 请先上传图片 --</option>
+                    <option value="pic/IMG_0829.jpg">IMG_0829.jpg (第1集-第1套)</option>
+                    <option value="pic/IMG_0830.jpg">IMG_0830.jpg (第1集-第2套)</option>
+                    <option value="pic/IMG_0831.JPG">IMG_0831.JPG (第1集-第3套)</option>
+                    <option value="pic/IMG_0832.JPG">IMG_0832.JPG (第1集-第4套)</option>
+                    <option value="pic/IMG_0833.JPG">IMG_0833.JPG (第1集-第5套)</option>
+                    <option value="pic/IMG_0834.JPG">IMG_0834.JPG (第1集-第6套)</option>
+                    <option value="pic/IMG_0835.JPG">IMG_0835.JPG (第2集-第1套)</option>
+                    <option value="pic/IMG_0836.JPG">IMG_0836.JPG (第2集-第2套)</option>
+                    <option value="pic/IMG_0837.JPG">IMG_0837.JPG (第2集-第3套)</option>
+                    <option value="pic/IMG_0838.JPG">IMG_0838.JPG (第2集-第4套)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>集数：</label>
+                <input type="number" id="episode" value="1" min="1" max="10">
+            </div>
+
+            <div class="control-group">
+                <label>穿搭编号：</label>
+                <input type="number" id="outfitNum" value="1" min="1" max="20">
+            </div>
+
+            <div class="control-group">
+                <label>单品编号：</label>
+                <input type="number" id="itemNum" value="1" min="1" max="20">
+            </div>
+
+            <button class="btn-success" onclick="cropAndSave()" id="cropBtn" disabled>✂️ 裁剪并保存</button>
+            <button class="btn-secondary" onclick="resetSelection()">🔄 重置选区</button>
+            <button class="btn-primary" onclick="downloadAll()">📦 下载所有裁剪图</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="workspace">
+            <div class="canvas-area">
+                <canvas id="imageCanvas"></canvas>
+            </div>
+
+            <div class="sidebar">
+                <div class="info-box">
+                    <h3>📏 当前选区</h3>
+                    <p id="selectionInfo">未选择区域</p>
+                    <p style="margin-top: 10px; font-size: 12px; color: #999;">
+                        提示：拖动鼠标框选要裁剪的区域
+                    </p>
+                </div>
+
+                <div class="crop-list">
+                    <h3>✅ 已裁剪 (<span id="cropCount">0</span>)</h3>
+                    <div id="croppedList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentImage = null;
+        let isDrawing = false;
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+        let endX = 0, endY = 0;  // 保存选区的最终坐标
+        let hasSelection = false;  // 标记是否有选区
+        let croppedImages = [];
+
+        // 加载上传的图片（使用 FileReader 避免 CORS 问题）
+        function loadUploadedImage() {
+            const fileInput = document.getElementById('imageUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            // 检查文件类型
+            if (!file.type.startsWith('image/')) {
+                showStatus('请选择图片文件', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                
+                img.onload = function() {
+                    currentImage = img;
+                    
+                    // 设置canvas大小
+                    const maxWidth = 900;
+                    const scale = Math.min(1, maxWidth / img.width);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    
+                    // 绘制图片
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    document.getElementById('cropBtn').disabled = false;
+                    showStatus('图片加载成功！可以开始框选了', 'success');
+                    
+                    console.log('图片已加载:', file.name, '尺寸:', img.width, 'x', img.height);
+                };
+                
+                img.onerror = function() {
+                    showStatus('图片加载失败', 'error');
+                };
+                
+                // 使用 FileReader 读取的 data URL，不会有 CORS 问题
+                img.src = e.target.result;
+            };
+            
+            reader.onerror = function() {
+                showStatus('文件读取失败', 'error');
+            };
+            
+            // 读取文件为 Data URL
+            reader.readAsDataURL(file);
+        }
+        
+        // 保留原来的函数（暂时不用）
+        function loadSelectedImage() {
+            showStatus('请使用"上传图片"按钮选择图片文件', 'error');
+        }
+
+        // 鼠标事件
+        canvas.addEventListener('mousedown', (e) => {
+            if (!currentImage) return;
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !currentImage) return;
+            const rect = canvas.getBoundingClientRect();
+            currentX = e.clientX - rect.left;
+            currentY = e.clientY - rect.top;
+            
+            // 重绘图片和选区
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+            
+            // 绘制选区
+            const width = currentX - startX;
+            const height = currentY - startY;
+            ctx.strokeStyle = '#d4a373';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(startX, startY, width, height);
+            ctx.fillStyle = 'rgba(212, 163, 115, 0.1)';
+            ctx.fillRect(startX, startY, width, height);
+            ctx.setLineDash([]);
+            
+            // 更新选区信息
+            document.getElementById('selectionInfo').innerHTML = `
+                起点: (${Math.round(startX)}, ${Math.round(startY)})<br>
+                宽度: ${Math.abs(Math.round(width))}px<br>
+                高度: ${Math.abs(Math.round(height))}px
+            `;
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (isDrawing && currentImage) {
+                isDrawing = false;
+                const rect = canvas.getBoundingClientRect();
+                endX = e.clientX - rect.left;
+                endY = e.clientY - rect.top;
+                hasSelection = true;
+                
+                // 保持选区显示
+                const width = endX - startX;
+                const height = endY - startY;
+                
+                if (Math.abs(width) > 10 && Math.abs(height) > 10) {
+                    showStatus('✅ 选区已确定，点击"裁剪并保存"按钮', 'success');
+                }
+            }
+        });
+
+        // 裁剪并保存
+        function cropAndSave() {
+            console.log('cropAndSave 被调用');
+            
+            if (!currentImage) {
+                showStatus('请先选择图片', 'error');
+                console.log('没有图片');
+                return;
+            }
+
+            if (!hasSelection) {
+                showStatus('请先在图片上框选要裁剪的区域', 'error');
+                console.log('没有选区');
+                return;
+            }
+
+            // 使用保存的最终坐标
+            const width = endX - startX;
+            const height = endY - startY;
+            
+            console.log('选区信息:', { startX, startY, endX, endY, width, height });
+
+            if (Math.abs(width) < 10 || Math.abs(height) < 10) {
+                showStatus('选区太小，请重新选择', 'error');
+                console.log('选区太小');
+                return;
+            }
+
+            // 计算实际图片上的坐标（考虑缩放）
+            const scaleX = currentImage.width / canvas.width;
+            const scaleY = currentImage.height / canvas.height;
+            
+            const cropX = Math.min(startX, endX) * scaleX;
+            const cropY = Math.min(startY, endY) * scaleY;
+            const cropWidth = Math.abs(width) * scaleX;
+            const cropHeight = Math.abs(height) * scaleY;
+            
+            console.log('裁剪参数:', { cropX, cropY, cropWidth, cropHeight, scaleX, scaleY });
+
+            // 创建临时canvas进行裁剪
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = cropWidth;
+            tempCanvas.height = cropHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            console.log('开始绘制到临时canvas');
+            
+            tempCtx.drawImage(
+                currentImage,
+                cropX, cropY, cropWidth, cropHeight,
+                0, 0, cropWidth, cropHeight
+            );
+
+            // 生成文件名
+            const episode = document.getElementById('episode').value;
+            const outfitNum = document.getElementById('outfitNum').value;
+            const itemNum = document.getElementById('itemNum').value;
+            const fileName = `ep${episode}_outfit${outfitNum}_item${itemNum}.jpg`;
+            
+            console.log('文件名:', fileName);
+            console.log('开始转换为blob...');
+
+            // 转换为blob并保存
+            try {
+                tempCanvas.toBlob((blob) => {
+                    console.log('toBlob 回调被执行, blob:', blob);
+                    
+                    if (!blob) {
+                        showStatus('生成图片失败', 'error');
+                        console.error('blob 为空');
+                        return;
+                    }
+                    
+                    const url = URL.createObjectURL(blob);
+                    console.log('创建 URL:', url);
+                    
+                    // 添加到已裁剪列表
+                    croppedImages.push({
+                        fileName: fileName,
+                        url: url,
+                        blob: blob
+                    });
+
+                    // 更新界面
+                    updateCroppedList();
+                    console.log('已更新裁剪列表');
+                    
+                    // 自动下载
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    console.log('触发下载');
+                    
+                    // 稍后移除
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+
+                    showStatus(`✅ 已保存: ${fileName}`, 'success');
+                    
+                    // 自动增加单品编号
+                    document.getElementById('itemNum').value = parseInt(itemNum) + 1;
+                    
+                    // 重置选区
+                    resetSelection();
+                }, 'image/jpeg', 0.95);
+            } catch (error) {
+                console.error('toBlob 错误:', error);
+                showStatus('裁剪失败: ' + error.message, 'error');
+            }
+        }
+
+        // 更新已裁剪列表
+        function updateCroppedList() {
+            const list = document.getElementById('croppedList');
+            const count = document.getElementById('cropCount');
+            
+            count.textContent = croppedImages.length;
+            
+            list.innerHTML = croppedImages.map((img, index) => `
+                <div class="crop-item">
+                    <img src="${img.url}" alt="${img.fileName}">
+                    <div class="crop-item-info">
+                        <div class="crop-item-name">${img.fileName}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 重置选区
+        function resetSelection() {
+            if (currentImage) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+            }
+            hasSelection = false;
+            startX = startY = endX = endY = currentX = currentY = 0;
+            document.getElementById('selectionInfo').innerHTML = '未选择区域';
+            showStatus('选区已重置，请重新框选', 'success');
+        }
+
+        // 下载所有裁剪图
+        function downloadAll() {
+            if (croppedImages.length === 0) {
+                showStatus('还没有裁剪任何图片', 'error');
+                return;
+            }
+
+            croppedImages.forEach(img => {
+                const a = document.createElement('a');
+                a.href = img.url;
+                a.download = img.fileName;
+                a.click();
+            });
+
+            showStatus(`已下载 ${croppedImages.length} 张图片`, 'success');
+        }
+
+        // 显示状态消息
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            
+            setTimeout(() => {
+                status.className = 'status';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
