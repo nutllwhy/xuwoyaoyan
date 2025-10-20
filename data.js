@@ -30,15 +30,13 @@ const outfitsData = {
         },
         {
             id: 3,
-            title: '黑色挂脖套装',
+            title: '蓝色牛仔套装',
             image: 'pic/1/许妍同款穿搭第一集_4_Rosy夕夕_来自小红书网页版.jpg',
             items: [
-                { brand: '亚历山大', name: '黑色大发夹', price: '¥1062' },
-                { brand: '恒迪创可贴', name: '贴纸', price: '¥10' },
-                { brand: 'Stella Vespertina', name: '上衣', price: '¥1260' },
-                { brand: 'Stella Vespertina', name: '长裤', price: '¥1760' },
-                { brand: 'Versace', name: '高跟鞋（疑似）', price: '¥5640' },
-                { brand: 'zuosen左森', name: '包包（疑似）', price: '¥148' }
+                { brand: 'TeenieWeenie', name: '衬衫', price: '¥385' },
+                { brand: 'TeenieWeenie', name: 'T恤', price: '¥189' },
+                { brand: 'TeenieWeenie', name: '牛仔裤', price: '¥386' },
+                { brand: 'eastpacifictrade', name: '小白鞋', price: '¥1299' }
             ]
         },
         {
@@ -54,19 +52,8 @@ const outfitsData = {
         },
         {
             id: 5,
-            title: '蓝色牛仔套装',
-            image: 'pic/1/许妍同款穿搭第一集_6_Rosy夕夕_来自小红书网页版.jpg',
-            items: [
-                { brand: 'TeenieWeenie', name: '衬衫', price: '¥385' },
-                { brand: 'TeenieWeenie', name: 'T恤', price: '¥189' },
-                { brand: 'TeenieWeenie', name: '牛仔裤', price: '¥386' },
-                { brand: 'eastpacifictrade', name: '小白鞋', price: '¥1299' }
-            ]
-        },
-        {
-            id: 6,
             title: '黑色全套休闲装',
-            image: 'pic/1/许妍同款穿搭第一集_7_Rosy夕夕_来自小红书网页版.jpg',
+            image: 'pic/1/许妍同款穿搭第一集_6_Rosy夕夕_来自小红书网页版.jpg',
             items: [
                 { brand: 'LYUOCHENG', name: '黑色帽子', price: '¥135' },
                 { brand: 'qina', name: '墨镜', price: '¥270' },
@@ -76,15 +63,27 @@ const outfitsData = {
             ]
         },
         {
-            id: 7,
+            id: 6,
             title: '白色丝巾衬衫',
-            image: 'pic/1/许妍同款穿搭第一集_8_Rosy夕夕_来自小红书网页版.jpg',
+            image: 'pic/1/许妍同款穿搭第一集_7_Rosy夕夕_来自小红书网页版.jpg',
             items: [
                 { brand: 'Fakeme', name: '眼镜', price: '¥1030' },
                 { brand: 'ClinkClunk', name: '衬衫', price: '¥2018' },
                 { brand: 'moonmoi', name: '牛仔裤（旧款）', price: '¥589' },
                 { brand: 'JOOG', name: '高跟鞋', price: '¥629' },
                 { brand: 'Tissot天梭', name: '手表（疑似）', price: '¥3515' }
+            ]
+        },
+        {
+            id: 7,
+            title: '米色家居套装',
+            image: 'pic/1/许妍同款穿搭第一集_8_Rosy夕夕_来自小红书网页版.jpg',
+            items: [
+                { brand: '无框抗边眼镜', name: '类似款', price: '¥-' },
+                { brand: 'JOJO\'S LIFE PD', name: '杯子', price: '¥98' },
+                { brand: 'Fabrique', name: '毛衣', price: '¥1690' },
+                { brand: 'SILKY MIRACLE', name: '两件套（二套）', price: '¥3580' },
+                { brand: 'GRAIN de BEAUTE', name: '发夹', price: '¥178' }
             ]
         },
         {
@@ -142,9 +141,10 @@ const outfitsData = {
             title: '深蓝色V领套装',
             image: 'pic/1/许妍同款穿搭第一集_13_Rosy夕夕_来自小红书网页版.jpg',
             items: [
-                { brand: '韩代', name: '发夹', price: '¥8' },
+                { brand: '韩代', name: '发夹（类似款）', price: '¥8' },
                 { brand: '刘敬小姐', name: '连衣裙', price: '¥189' },
                 { brand: 'Oneup', name: '小清单', price: '¥92' },
+                { brand: '贵州白灵', name: '复方氨酚烷胺胶囊', price: '¥9.9' },
                 { brand: 'JOJO\'S LIFE PD', name: '杯子', price: '¥98' }
             ]
         }
