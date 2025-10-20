@@ -31,7 +31,7 @@ function initNavTabs() {
     primaryContainer.innerHTML = '';
     moreContainer.innerHTML = '';
 
-    // 第一行显示 1-9 集，其余放入更多
+    // 第一行显示 1-8 集，其余放入更多
     episodes.forEach((ep, index) => {
         const button = document.createElement('button');
         button.className = 'tab-btn';
@@ -45,7 +45,7 @@ function initNavTabs() {
 
         button.addEventListener('click', () => onEpisodeClick(button, ep.num));
 
-        if (ep.num <= 9) {
+        if (ep.num <= 8) {
             primaryContainer.appendChild(button);
         } else {
             moreContainer.appendChild(button);
